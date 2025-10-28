@@ -3,59 +3,63 @@ from bs4 import BeautifulSoup
 import csv
 import time
 
-# Base URL
 BASE_URL = "https://www.kaanoon.com"
+START_URL = f"{BASE_URL}/answers"
 
-# Target page
-URL = f"{BASE_URL}/answers"
-
-# Headers to mimic a browser
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                  "AppleWebKit/537.36 (KHTML, like Gecko) "
+                  "Chrome/120.0.0.0 Safari/537.36"
 }
 
-# Fetch the main answers page
-response = requests.get(URL, headers=HEADERS)
-soup = BeautifulSoup(response.text, "html.parser")
+def get_total_pages():
+    """Find how many pages exist."""
+    r = requests.get(START_URL, headers=HEADERS)
+    s = BeautifulSoup(r.text, "html.parser")
+    pages = s.select(".pagination li a")
+    if not pages:
+        return 1
+    numbers = [int(a.text) for a in pages if a.text.isdigit()]
+    return max(numbers) if numbers else 1
 
-# Find all question rows
-questions = soup.select("table.landing-latest-answers tr.answer")
 
-# Prepare CSV
-with open("kaanoon_data.csv", "w", newline="", encoding="utf-8") as f:
-    writer = csv.writer(f)
-    writer.writerow(["Title", "Link", "Description"])  # CSV headers
+def scrape_page(page_number):
+    """Scrape titles and links from a single page."""
+    url = f"{START_URL}?page={page_number}"
+    res = requests.get(url, headers=HEADERS)
+    soup = BeautifulSoup(res.text, "html.parser")
+
+    questions = soup.select("table.landing-latest-answers tr.answer")
+    data = []
 
     for q in questions:
-        # Extract title
         title_tag = q.select_one("span.title a")
         if not title_tag:
             continue
         title = title_tag.get_text(strip=True)
-
-        # Extract href and form full link
         href = title_tag.get("href")
         full_link = BASE_URL + href if href else ""
+        data.append([title, full_link])
+        print(f"✅ Page {page_number}: {title[:80]}...")
 
-        print(f"Scraping: {title}")
+    return data
 
-        # Visit each question link to get the full description
-        try:
-            detail_page = requests.get(full_link, headers=HEADERS)
-            detail_soup = BeautifulSoup(detail_page.text, "html.parser")
 
-            # Extract full description (question text)
-            desc_tag = detail_soup.select_one("div.thread div.question.entry pre.description")
-            description = desc_tag.get_text(strip=True) if desc_tag else "No description found."
+def main():
+    total_pages = get_total_pages()
+    print(f"📄 Found {total_pages} pages to scrape.")
 
-            # Write to CSV
-            writer.writerow([title, full_link, description])
+    with open("kaanoon_titles_links.csv", "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(["Title", "Full Link"])
 
-        except Exception as e:
-            print(f"Error scraping {full_link}: {e}")
-            writer.writerow([title, full_link, "Error fetching description"])
+        for page in range(1, 20000 + 1):
+            page_data = scrape_page(page)
+            writer.writerows(page_data)
+            time.sleep(2)  # polite delay
 
-        # Be polite to server
-        time.sleep(2)
+    print("\n✅ Scraping completed! Data saved to 'kaanoon_titles_links.csv'.")
 
-print("✅ Scraping completed! Data saved to 'kaanoon_data.csv'")
+
+if __name__ == "__main__":
+    main()
