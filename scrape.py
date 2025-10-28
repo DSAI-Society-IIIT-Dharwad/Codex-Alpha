@@ -53,7 +53,7 @@ def main():
         writer = csv.writer(f)
         writer.writerow(["Title", "Full Link"])
 
-        for page in range(1, 20000 + 1):
+        for page in range(1, total_pages + 1):
             page_data = scrape_page(page)
             writer.writerows(page_data)
             time.sleep(2)  # polite delay
