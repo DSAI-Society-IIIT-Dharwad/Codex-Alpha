@@ -1,0 +1,105 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+.sidebar{
+    width: 18vw;
+    height: 100vh;
+    background-color: #181b20;
+    border-right: 1px solid #282C34;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.top-section{
+    height: 12vh;
+    width: 100%;
+    border-bottom: 1px solid #282C34;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.top-section span{
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-left: 10px;
+}
+
+.new-chat{
+    width: 90%;
+    height: 40px;
+    background-color: #20252b;
+    border-radius: 5px;
+    margin: 20px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background-color: transparent;
+}
+
+
+
+.new-chat button{
+    width: 100%;
+    height: 100%;
+    background-color: #4BE784;
+    border: none;
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    border-radius: 25px;
+}
+.new-chat span{
+    color: black;
+}
+
+.history{
+    height: 70vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+.history span{
+    font-size: small;
+    color: gray;
+
+}
+ul{
+    list-style-type: none;
+}
+ul li{
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+ul li button{
+    border: none;
+    background-color: transparent;
+    padding: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+}
+ul li button span{
+    font-weight: 600;
+}
+
+ul li button:hover{
+    background-color: #21252B;
+    color: black;
+    border-radius: 5px;
+    cursor: pointer;
+}
