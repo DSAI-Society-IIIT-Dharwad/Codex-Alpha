@@ -1,37 +1,68 @@
 # ⚖️ Legal Chat Assistant
 
-An intelligent **Legal Chat Assistant** powered by OpenAI.  
-This application provides users with a conversational interface to get assistance with their legal queries.
+**Domain**: AI/ML
 
-The backend is built with **Python (FastAPI)**, and the frontend is a modern, responsive UI built with **React (Vite)** and styled with vanilla **CSS**.
-
----
-
-## ✨ Features
-
-- **Conversational AI:** Ask legal questions in natural language.
-- **Fast & Scalable Backend:** Powered by FastAPI and Uvicorn.
-- **Modern UI:** Clean and intuitive React interface.
-- **Quick Setup:** Run locally in just a few steps.
+**Problem Statement**: 
+Develop an AI-powered Legal Chatbot capable of providing guidance and insights related to the Indian Constitution and Legal Cases, using scraped data and intelligent agent routing.
 
 ---
 
-## 🛠️ Tech Stack
+## ⚙️ System Review
 
-### Backend
-- **Language:** Python 3.9+
-- **Framework:** FastAPI
-- **API:** Groq API
-- **Server:** Uvicorn
-- **Local URL:** [http://127.0.0.1:8000](http://127.0.0.1:8000)
-
-### Frontend
-- **Library:** React (with JSX)
-- **Build Tool:** Vite
-- **Styling:** Vanilla CSS
-- **Local URL:** [http://localhost:5173](http://localhost:5173)
+The chatbot uses Groq API to process user queries, intelligently routing them to specialized agents:
+- 🏦 **Constitutional Agent** — handles queries related to the Indian Constitution (e.g., fundamental rights, articles, etc.)
+- ⚖️ **Legal Court Agent** — handles queries related to court cases, inheritance, property disputes, etc.
 
 ---
+
+## 🧩 Workflow Breakdown
+
+### a. Tech Stack
+- **Framework:** FastAPI / Flask
+- **Language:** Python
+- **AI Model:** Groq API (LLaMA or Mixtral models)
+- **NLP Layer:** LangChain for context retrieval and prompt management
+
+---
+
+### b. Agent Routing System
+- User sends a query (via frontend)
+- Router module analyzes the intent using NLP classification
+    - If query relates to constitutional law, → forward to **Constitutional Agent**
+    - If query relates to legal disputes or cases, → forward to **Legal Court Agent**
+- The selected agent retrieves relevant information from `legal_knowledge_base.txt`
+- Context is passed to the Groq LLM endpoint for final reasoning and response generation
+- Response returned in structured JSON format
+---
+
+##  Backend flow
+
+```bash
+graph TD
+A[User Query] --> B[Router Module]
+B -->|Classify Intent| C[Constitutional Agent]
+B -->|Classify Intent| D[Legal Court Agent]
+C --> E[Search legal_knowledge_base.txt]
+D --> E
+E --> F[Groq API (LLM Call)]
+F --> G[Summarized Legal Response]
+G --> H[Return JSON Response]
+```
+
+##  Frontend flow
+
+#### Tech used:
+- React.jsx
+- Fetch API for backend communication
+
+#### Flow:
+- User enters a legal question in chatbot interface.
+
+- A POST request is made to backend endpoint `/api/chat`:
+
+- Frontend displays the chatbot’s response and source reference dynamically.
+
+![Dashboard Preview](./UI.png)
 
 ## 🚀 Getting Started
 
